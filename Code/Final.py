@@ -56,10 +56,11 @@ def getting_data():
         season = '20' + str(22 - season_num) + '-' + str(23 - season_num)
         season_select = Select(driver.find_element(By.CLASS_NAME, 'DropDown_select__4pIg9'))
         season_select.select_by_visible_text(season)
-        time.sleep(1)
-        soup = load_soup_elment()
+        time.sleep(2)
         page_drop = Select(driver.find_element(By.XPATH, '//*[@id="__next"]/div[2]/div[2]/div[3]/section[2]/div/div[2]/div[2]/div[1]/div[3]/div/label/div/select'))
         page_drop.select_by_visible_text("All")
+        time.sleep(2)
+        soup = load_soup_elment()
         rows = soup.find_all('tr')
         rows.pop(0)
         for row in rows:
