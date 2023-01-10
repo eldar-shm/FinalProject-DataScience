@@ -46,8 +46,8 @@ def bioInfo(playerUrl):
     return bio
 
 def get_all_star_data():
-    players = []
-    for seasonNum in range(10):
+    dictPlayers = {}
+    for seasonNum in range(9):
         season = str(2022 - seasonNum)
         allStarUrl = 'https://www.basketball-reference.com/allstar/NBA_' + str(season) + '.html'
         driver.get(allStarUrl)
@@ -58,16 +58,34 @@ def get_all_star_data():
         for tag in playersTags:
             try:
                 Name = tag.find('a').text
-                if Name not in players:
-                    players.append(Name)
+                seasonPlayers.append(Name)
             except:
                 continue
+        dictPlayers[str(seasonNum)] = seasonPlayers
 
-    df = pd.DataFrame({'Player Name':players})
-    df.to_csv('All-Star Players.csv')
+    driver.quit()
+    return dictPlayers
+
+def allStarColumn():
+    df = pd.read_csv('Data.csv')
+
+    #addin new column that define the season number(out of 10)
+    season = 0
+    for index, row in df.iterrows():
+        if row['ID'] == 1:
+            season += 1
+        df.at[index, 'Season Number'] = season
+
+    #adding new column - Is All Star player ?
+    df['ASP'] = 0
+    dictPlayers = get_all_star_data()
+    for season, players in enumerate(dictPlayers.values()):
+        for player in players:
+            df.loc[(df['Season Number'] == season + 2) & (df['Name'] == player), 'ASP'] = 1
+
+    df.to_csv('Data.csv')
 
     
-
 
 
 
@@ -104,4 +122,4 @@ def getting_data():
     driver.quit()
     
 #getting_data()
-get_all_star_data()
+allStarColumn()
